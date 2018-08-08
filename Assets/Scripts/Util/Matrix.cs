@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 public class Matrix : ICloneable
 {
-    private List<Vector4> _vectors;
-    public List<Vector4> Vectors
-    {
-        get { return _vectors; }
-    }
+    public List<Vector4> Vectors { get; set; }
 
     public Matrix(params Vector4[] vectors)
     {
-        _vectors = vectors.ToList();
+        Vectors = vectors.ToList();
     }
 
     public static Matrix operator *(Matrix matrix, float scalar)
@@ -45,15 +42,20 @@ public class Matrix : ICloneable
         return newVector;
     }
 
-    public static Matrix operator *(Matrix matrix01, Matrix matrix02)
-    {
-        var newMatrix = new Matrix();
-
-        return newMatrix;
-    }
-
     public object Clone()
     {
         return MemberwiseClone();
+    }
+
+    public override string ToString()
+    {
+        var stringBuilder = new StringBuilder("|");
+
+        foreach (var v in Vectors)
+        {
+            stringBuilder.Append(" " + v.ToString() + " |");
+        }
+
+        return stringBuilder.ToString();
     }
 }

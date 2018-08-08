@@ -8,25 +8,19 @@ public class PlayerPosition : MonoBehaviour
     private Transform _transform;
     [SerializeField] private Transform _targetTransform;
     [SerializeField] private DataDisplay _dataDisplay;
-    private Vector3[] _rotationMatrix;
+    private Matrix _rotationMatrix;
 
     private void Awake()
     {
         _transform = GetComponent<Transform>();
-        _rotationMatrix = new Vector3[2];
+        _rotationMatrix = new Matrix(Vector2.zero, Vector2.zero);
     }
 
     private void Start()
     {
-        RotatePlayer(18);
-        CalculateRotationMatrix();
-    }
-
-    private void Update()
-    {
+        RotatePlayer(0);
         CalculateRotationMatrix();
         ToLocal();
-        DrawDirectionVector();
     }
 
     public void RotatePlayer(float rotation)
@@ -35,32 +29,34 @@ public class PlayerPosition : MonoBehaviour
         if (rotation >= 360) rotation = 0;
         _transform.localRotation = Quaternion.Euler(0, 0, rotation);
         _dataDisplay.UpdatePlayerRotation(rotation);
+
+        CalculateRotationMatrix();
+        ToLocal();
     }
 
     private void CalculateRotationMatrix()
     {
         var rotation = _transform.localRotation.eulerAngles;
         var rotationAngle = rotation.z;
-   
-        var sin = Mathf.Sin(rotationAngle * Mathf.PI / 180);
-        var cos = Mathf.Cos(rotationAngle * Mathf.PI / 180);
 
-        var iHead = new Vector2(sin, -cos);
-        var jHead = new Vector2(cos, sin);
+        var sin = Mathf.Sin(rotationAngle * Mathf.Deg2Rad);
+        var cos = Mathf.Cos(rotationAngle * Mathf.Deg2Rad);
 
-        _rotationMatrix[0] = iHead;
-        _rotationMatrix[1] = jHead;
+        var iHead = new Vector2(cos, sin);
+        var jHead = new Vector2(-sin, cos);
+
+        _rotationMatrix.Vectors[0] = iHead;
+        _rotationMatrix.Vectors[1] = jHead;
 
         _dataDisplay.UpdateMatrix(iHead, jHead);
     }
 
-    private Vector3 ToLocal()
+    private Vector2 ToLocal()
     {
-        return new Vector3();
-    }
-
-    private void DrawDirectionVector()
-    {
-
+        var worldDir = new Vector2(4, 3);
+        var outputVector = _rotationMatrix * worldDir;
+        _dataDisplay.UpdateOuputVector(outputVector);
+        Debug.Log("Angle: " + Mathf.Atan2(outputVector.y, outputVector.x) * Mathf.Rad2Deg);
+        return outputVector;
     }
 }

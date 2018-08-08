@@ -10,6 +10,7 @@ public class DataDisplay : MonoBehaviour
     [SerializeField] private Text _playerRotationDir;
     [SerializeField] private Slider _playerRotationSlider;
     [SerializeField] private Text[] _matrixValues;
+    [SerializeField] private Text[] _outputVectorText;
 
     public void UpdatePlayerRotation(float rotation)
     {
@@ -33,8 +34,19 @@ public class DataDisplay : MonoBehaviour
         _matrixValues[3].text = jHead.y.ToString("0.00");
     }
 
+    public void UpdateOuputVector(Vector2 outputVector)
+    {
+        _outputVectorText[0].text = outputVector.x.ToString("0.00");
+        _outputVectorText[1].text = outputVector.y.ToString("0.00");
+    }
+
     public void OpenHelpVideo()
     {
         Application.OpenURL("https://youtu.be/kYB8IZa5AuE");
+    }
+
+    public void OpenHelpVideo02()
+    {
+        Application.OpenURL("https://youtu.be/lPWfIq5DzqI");
     }
 }
